@@ -26,6 +26,7 @@ void config() {
 
     // ==================== sensor setup ==================== //
     //devices.sensor.new_imu("imu", 9, true);
+    devices.imu._new("imu", 9, true);
 
     // distance
     // rotation

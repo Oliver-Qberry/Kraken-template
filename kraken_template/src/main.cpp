@@ -2,6 +2,7 @@
 
 #include "config.cpp"
 
+
 void initialize() {}
 
 void competition_initialize() {}

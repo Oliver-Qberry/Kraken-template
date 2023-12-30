@@ -1,0 +1,24 @@
+_config:
+    add all to this cpp file so that src can call it and get all from k_t file
+
+_devices:
+    rotation
+    distance
+    motor
+    more info in config file comments
+
+    make sure all classes are setup in _devices
+
+_drivetrain:
+    create drivetrain class
+    make it seperate from devices class
+
+_stockopc:
+    class to store different stockopc functions
+
+
+auto:
+    might need to make a class to handle the stuff in this folder
+
+framework:
+    will store different needed functions
