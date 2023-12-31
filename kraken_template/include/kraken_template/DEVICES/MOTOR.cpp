@@ -21,7 +21,7 @@ class _MOTOR {
     public:
         bool added_motor = false;
 
-        void new_motor(std::string name, int port_, pros::motor_brake_mode_e_t brake_mode, bool reverse_ = false) {
+        void _new(std::string name, int port_, pros::motor_brake_mode_e_t brake_mode, bool reverse_ = false) {
             this->added_motor = true;
             pros::Motor new_motor(port_, reverse_);
             new_motor.set_brake_mode(brake_mode);
@@ -43,8 +43,8 @@ class _MOTOR {
             this->map_motor_data_reverse_keybind[name] = reverse_keybind;
         }
 
-        void set_motor_pid(std::string name) {this->map_motor_data_have_pid[name] = true;}
-        void set_motor_pid_values(std::string name, double kp, double ki, double kd) {
+        void set_motor_pid(std::string name, double kp, double ki, double kd) {
+            this->map_motor_data_have_pid[name] = true;
             std::tuple<double, double, double> ktup = {kp, ki, kd};
             this->map_motor_pid_kval[name] = ktup;
             }
