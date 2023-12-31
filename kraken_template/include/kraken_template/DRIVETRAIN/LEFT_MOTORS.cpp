@@ -12,5 +12,7 @@ class _LEFT_MOTORS {
 
         }
 
+
+        void move(int voltage) {}
         
 };
