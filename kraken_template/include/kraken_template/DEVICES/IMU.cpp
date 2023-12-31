@@ -23,16 +23,17 @@ class _IMU {
         }
 
         pros::IMU imu(std::string name) {
-            if (added_imu) {
-                auto idx = std::distance(imu_names.begin(), 
-                                         std::find(imu_names.begin(), imu_names.end(), name));
-                pros::IMU imu = imu_imus[idx];
-                return imu;
+            if (this->added_imu) {
+                auto it = std::find(this->imu_names.begin(), this->imu_names.end(), name);
+                if (it != this->imu_names.end()) {
+                    auto idx = std::distance(this->imu_names.begin(), it);
+                    return this->imu_imus[idx];
+                }
             }
             return NULL;
         }
 
-        std::vector<std::string> get_imu_data_imu_names() {return this->imu_names;}
+        std::vector<std::string> get_imu_data_names() {return this->imu_names;}
 
         bool get_imu_data_imu_reset_on_startup(std::string name) {
             return this->map_imu_data_reset_on_startup[name];}
