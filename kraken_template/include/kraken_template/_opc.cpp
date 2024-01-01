@@ -9,6 +9,7 @@ class OPC {
 
     void _drivetrain() {
         if (drivetrain.added_drivetrain_motors && devices.controller.get_data_drive_keybinds_set()) {
+            // get current controller data
             int c_master_anaX = devices.controller.master().get_analog(devices.controller.get_ana_x()); 
             int c_master_anaY = devices.controller.master().get_analog(devices.controller.get_ana_y());
 
@@ -25,9 +26,9 @@ class OPC {
                 rev = -1;
             }
 
+            // move motors at mapped voltages
             drivetrain.left_motors.move((c_master_anaY*y_sens*-c_master_anaX*x_sens));
             drivetrain.right_motors.move((c_master_anaY*y_sens+c_master_anaX*x_sens));
-
         }
     }
 

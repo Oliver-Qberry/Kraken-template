@@ -1,5 +1,6 @@
 
-
+devices
+    add device nodes / subclasses for variable storage
 
 _stockopc:
     class to store different stockopc functions
