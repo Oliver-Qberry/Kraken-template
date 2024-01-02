@@ -1,0 +1,23 @@
+k_t version 1
+
+Cole J
+
+to do list:
+
+    does not currently have auto or on startup setup, will fix in later versions.
+
+    drivetrain code needs to be brought to the newer node based version so it is easier to use.
+
+    might need to bring controller to the new node based.
+
+    opc motor function needs to be finished.
+
+    commenting on the code needs to be added.
+
+    file / folder names need to be redone.
+
+    documentation needs to be done.
+
+    debugging.
+
+currently stock opc adi and stock opc drivetrain functions can be used for testing.

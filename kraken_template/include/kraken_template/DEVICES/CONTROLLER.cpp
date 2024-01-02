@@ -38,11 +38,11 @@ class _CONTROLLER {
         pros::Controller partner() {return c_partner;}
 
 
-        bool get_data_drive_keybinds_set() {return this->drive_keybinds_set;}
+        bool get_data_drive_keybinds_set() {return drive_keybinds_set;}
         bool get_data_drive_sens_set() {return drive_sens_set;}
-        pros::controller_analog_e_t get_ana_x() {return this->controller_analog_x_id;}
-        pros::controller_analog_e_t get_ana_y() {return this->controller_analog_y_id;}
-        bool get_data_reverse_drive_direction() {return this->reverse_drive_direction;}
-        double get_x_sensitivity() {return this->x_multi;}
-        double get_y_sensitivity() {return this->y_multi;}
+        pros::controller_analog_e_t get_ana_x() {return controller_analog_x_id;}
+        pros::controller_analog_e_t get_ana_y() {return controller_analog_y_id;}
+        bool get_data_reverse_drive_direction() {return reverse_drive_direction;}
+        double get_x_sensitivity() {return x_multi;}
+        double get_y_sensitivity() {return y_multi;}
 };

@@ -29,6 +29,7 @@ class _DRIVETRAIN {
 
 
         bool added_drivetrain_motors = false;
+        bool set_gearset_ratio = false;
         bool added_drivetrain_imu = false;
 
         void set_motor_ports(std::vector<int> left_ports, std::vector<int> right_ports, 
@@ -65,6 +66,7 @@ class _DRIVETRAIN {
         void set_rpm(double motor_rpm, double wheel_rpm, double wheel_diameter) {
             this->wheel_diameter = wheel_diameter;
             this->gearset_rpm_ratio = ((50.0)/((motor_rpm)/(3600.0)))*((motor_rpm)/(wheel_rpm));
+            this->set_gearset_ratio = true;
         }
 
         void set_imu_port(int _port) {
@@ -86,7 +88,7 @@ class _DRIVETRAIN {
         }
 
         void move(double distance) {
-            if (added_drivetrain_motors) {
+            if (added_drivetrain_motors && set_gearset_ratio) {
                 // create pid
                 PIDController drive_pid(drive_pid_karr[0], drive_pid_karr[1], drive_pid_karr[2]);
                 // reset pid
@@ -107,7 +109,7 @@ class _DRIVETRAIN {
         }
 
         void move(double distance, double angle) {
-            if (added_drivetrain_motors && added_drivetrain_imu) {
+            if (added_drivetrain_motors && added_drivetrain_imu && set_gearset_ratio) {
                 PIDController drive_pid(drive_pid_karr[0], drive_pid_karr[1], drive_pid_karr[2]);
                 drive_pid.reset();
                 reset_drive_positions(left_motors, right_motors);

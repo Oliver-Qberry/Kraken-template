@@ -1,9 +1,9 @@
 #include "main.h"
 
-//#include "config.cpp"
+#include "config.cpp"
 #include "kraken_template/_opc.cpp"
 
-void initialize() {}
+void initialize() {config();}
 
 void competition_initialize() {}
 
