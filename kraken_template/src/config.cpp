@@ -30,7 +30,7 @@ void config() {
 
     // motors pid setup
     devices.motor.set_pid_values("launcher", 1.0, 0, 0);
-    devices.motor.set_pid_target_velocity("launcher", 500, 600);
+    devices.motor.set_pid_target_velocity("launcher", 500, 10, 600);
 
     // ==================== sensor setup ==================== //
     devices.distance.new_distance("front", 10);

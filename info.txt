@@ -12,9 +12,9 @@ to do list:
 
     opc motor function needs to be finished.
 
-    commenting on the code needs to be added.
-
     file / folder names need to be redone.
+
+    commenting on the code needs to be added.
 
     documentation needs to be done.
 

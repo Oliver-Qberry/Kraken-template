@@ -25,21 +25,28 @@ class _MOTOR {
 
         void set_motor_keybinds(std::string name, 
                                 pros::controller_digital_e_t keybind, 
-                                bool in_toggle_mode, bool have_reverse_keybind = false, 
+                                bool in_toggle_mode = false, int voltage = 127, bool have_reverse_keybind = false, 
                                 pros::controller_digital_e_t reverse_keybind = pros::E_CONTROLLER_DIGITAL_X) {
-            this->node_map[name].set_data(keybind, in_toggle_mode, have_reverse_keybind, reverse_keybind);
+            this->node_map[name].set_data(keybind, in_toggle_mode, voltage, have_reverse_keybind, reverse_keybind);
         }
 
         void set_pid_values(std::string name, double kp, double ki, double kd) {
             this->node_map[name].set_pid_kval(kp, ki, kd);
         }
 
-        void set_pid_target_velocity(std::string name, double target_velocity, double cartrage_rpm) {
-            this->node_map[name].set_pid_target(target_velocity, cartrage_rpm);
+        void set_pid_target_velocity(std::string name, double target_velocity, double range, double cartrage_rpm) {
+            this->node_map[name].set_pid_target(target_velocity, range, cartrage_rpm);
         }
 
         pros::Motor get_motor(std::string name) {
             return node_map[name].get_motor();
+        }
+
+        bool pid_within_goal(std::string name) {
+            if (node_map[name].pid().goal_met()) {
+                return true;
+            }
+            return false;
         }
 
         std::vector<std::string> get_motor_names() {
