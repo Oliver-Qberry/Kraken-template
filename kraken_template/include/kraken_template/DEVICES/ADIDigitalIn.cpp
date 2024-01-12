@@ -21,9 +21,9 @@ class _ADIDigitalIn {
             this->added_adi = true;
         }
 
-        void set_ADI_keybinds(std::string name, pros::controller_digital_e_t keybind, 
-                               bool in_toggle_mode = false, bool reverse_flow = false) {
-            this->node_map[name].set_data(keybind, in_toggle_mode, reverse_flow);
+        void set_ADI_keybinds(std::string name, void(*function_)(), 
+                               bool trigger_if_true = true, bool on_new_press_ = false) {
+            this->node_map[name].set_data(function_, trigger_if_true, on_new_press_);
         }
 
         pros::ADIDigitalIn get_ADI(std::string name) {

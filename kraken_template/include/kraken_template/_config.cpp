@@ -9,3 +9,9 @@ _DRIVETRAIN drivetrain;
 
 // opc not included in config as config is referenced in op
 // cannot define inside its base file
+
+#include "auto/_auto.cpp"
+_AUTO AUTO;
+
+#include "_pvc.cpp"
+PVC pvc;

@@ -6,21 +6,21 @@ class OPC {
     public:
 
     void _drivetrain() {
-        if (drivetrain.added_drivetrain_motors && devices.controller.get_data_drive_keybinds_set()) {
+        if (drivetrain.added_drivetrain_motors && devices.controller.data._drive_keybinds_set) {
             // get current controller data
-            int c_master_anaX = devices.controller.master().get_analog(devices.controller.get_ana_x()); 
-            int c_master_anaY = devices.controller.master().get_analog(devices.controller.get_ana_y());
+            int c_master_anaX = devices.controller.master().get_analog(devices.controller.data._controller_analog_x_id); 
+            int c_master_anaY = devices.controller.master().get_analog(devices.controller.data._controller_analog_y_id);
 
             // check and set sens
             double x_sens = 1, y_sens = 1;
-            if (devices.controller.get_data_drive_sens_set()) {
-                x_sens = devices.controller.get_x_sensitivity();
-                y_sens = devices.controller.get_y_sensitivity();
+            if (devices.controller.data._drive_sens_set) {
+                x_sens = devices.controller.data._x_sensitivity;
+                y_sens = devices.controller.data._y_sensitivity;
             }
 
             // check and set reverse
             int rev = 1;
-            if (devices.controller.get_data_reverse_drive_direction()) {
+            if (devices.controller.data._reverse_drive_direction) {
                 rev = -1;
             }
 
@@ -141,7 +141,7 @@ class OPC {
         }
     }
 
-    void _adi() {
+    void _adi_out() {
         // adi out
         if (devices.ADIDigitalOut.added_adi) {
             for (const auto& name : devices.ADIDigitalOut.get_ADI_names()) {
@@ -178,6 +178,35 @@ class OPC {
             }
         }
     }
+
+    void _adi_in() {
+        // adi in
+        if (devices.ADIDigitalIn.added_adi) {
+            for (const auto& name : devices.ADIDigitalIn.get_ADI_names()) {
+                if (devices.ADIDigitalIn.get_ADI_node(name).has_adv_data) {
+                    Node_ADIDigitalIn node = devices.ADIDigitalIn.get_ADI_node(name);
+
+                        // node has adv data
+                        if (node._on_new_press) {
+                            // on new press
+                            if (node.get_adiin().get_new_press() != node._reverse_flow) {
+                                node.run();
+                            }
+                        } else {
+                            // not on new press
+                            if (node.get_adiin().get_value() != node._reverse_flow) {
+                                node.run();
+                            
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void _distance() {}
+    void _imu() {}
+    void _rotation() {}
 };
 
 OPC opc;

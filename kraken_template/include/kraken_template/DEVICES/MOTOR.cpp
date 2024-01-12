@@ -18,8 +18,7 @@ class _MOTOR {
 
         void new_motor(std::string name, int port, pros::motor_brake_mode_e_t brake_mode, bool reverse = false) {
             this->node_names.push_back(name);
-            Node_MOTOR node(name, port, brake_mode, reverse);
-            this->node_map[name] = node;
+            node_map[name] = Node_MOTOR(name, port, brake_mode, reverse);
             this->added_motor = true;
         }
 
@@ -54,6 +53,6 @@ class _MOTOR {
         }
 
         Node_MOTOR get_motor_node(std::string name) {
-            return node_map[name];
+            return this->node_map[name];
         }
 };
