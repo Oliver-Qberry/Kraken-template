@@ -4,14 +4,10 @@ Cole J
 
 to do list:
 
-    does not currently have auto or on startup setup, will fix in later versions.
-
     check and maybe update drivetrain code
 
     finish opc functions
         update distance imu and rotation in devices
-
-    auto select need to be added
 
     file / folder names need to be redone.
 
@@ -20,4 +16,3 @@ to do list:
     documentation needs to be done.
 
     debugging.
-
