@@ -25,7 +25,7 @@ class _ROTATION {
 
 
         pros::Rotation get_rotation(std::string name) {
-            return node_map[name].get_adiin();
+            return node_map[name].get_rotation();
         }
 
         std::vector<std::string> get_rotation_names() {

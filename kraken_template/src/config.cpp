@@ -1,6 +1,7 @@
 #pragma once
 #include "main.h"
 #include "kraken_template/_config.cpp"
+#include "pros/llemu.hpp"
 using namespace std;
 
 // classes
@@ -26,6 +27,11 @@ using namespace std;
 
 void example_sensor_function() {
     cout<<"sensor function called"<<endl;
+}
+// ==================== auto config function ==================== //
+
+void example_auto_function_1() {
+    cout<<"example auto function 1 is running"<<endl;
 }
 
 // ==================== device config function ==================== //
@@ -58,24 +64,19 @@ void config() {
     devices.ADIDigitalIn.new_ADI("in", 'b');
     devices.ADIDigitalIn.set_ADI_keybinds("in", example_sensor_function, pvc.controller.B);
 
-    devices.ADIDigitalIn.get_ADI_node("in").run();
-}
 
-// ==================== place your auto functions here ==================== //
 
-void example_auto_function_1() {
-    cout<<"example auto function 1 is running"<<endl;
-}
 
-// we can set up the auto functions you created with the auto config function
-
-// ==================== auto config function ==================== //
-void auto_config() {
     // ==================== adding auto functions ==================== //
-    //AUTO.new_auto("name", "desc", example_auto_function_1());
-    //AUTO.set_default_auto("name");
+    AUTO.new_auto("name", "desc", example_auto_function_1);
+    AUTO.set_default_auto("name");
     
+    AUTO.set_auto_select_keybind(pvc.controller.DOWN);
 }
+
+void when_competition_initialize() {}
+void when_disabled() {}
+
 
 /*
 below are for setting up the startup functions.
@@ -86,5 +87,15 @@ devices when the robot turns on.
 */
 // ==================== setup on startup control function ==================== //
 void setup_on_startup() {
+
+    AUTO.generate_name_array();
+
+    pros::lcd::initialize();
+
+    drivetrain.imu().reset();
+
+    
+
+    
     
 }

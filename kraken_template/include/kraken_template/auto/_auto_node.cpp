@@ -5,13 +5,14 @@
 class auto_node{
     private:
     public:
-        int _function;
+        void (*_function)();
         std::string _desc;
 
         auto_node() {}
-        auto_node(int _function, std::string _desc) : _function(_function), _desc(_desc) {}
-
-        int run() {
-            return _function;
+        auto_node(void (*_function)(), std::string _desc) {
+            this->_function = _function;
+            this->_desc = _desc;
         }
+
+        void run() {_function();}
 };

@@ -1,6 +1,7 @@
 #pragma once
 #include "main.h"
 #include <string>
+#include <vector>
 
 class Node_DISTANCE {
     public:
@@ -14,7 +15,5 @@ class Node_DISTANCE {
             this->dis.push_back(new_dis);
         }
 
-        pros::Distance get_distance() {
-            return dis.front();
-        }
+        pros::Distance get_distance() {return dis.front();}
 };

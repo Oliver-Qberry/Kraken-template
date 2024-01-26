@@ -208,5 +208,5 @@ class OPC {
     void _imu() {}
     void _rotation() {}
 };
-
+// define opc in OPC to prevent recursive definition
 OPC opc;

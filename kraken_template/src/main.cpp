@@ -2,7 +2,9 @@
 // main header for c++ and pros
 #include "main.h"
 // kraken template include
+// main config include
 #include "config.cpp"
+// opc function include
 #include "kraken_template/_opc.cpp"
 
 // ==================== initialize functions ==================== //
@@ -10,16 +12,27 @@ void initialize() {
     config(); 
     setup_on_startup();
 
+    pros::lcd::set_text(1, "kraken template: auto select");
+
     while (true) {
-        
+        if (AUTO.has_adv_data) {
+            if (devices.controller.master().get_digital_new_press(AUTO.keybind())) {
+                AUTO.auto_select += 1;
+                if (AUTO.auto_select >= AUTO.len()) {
+                    AUTO.auto_select = 0;
+                }
+            }
+        }
+        pros::lcd::set_text(2, AUTO.get_map()[AUTO.get_name_array()[AUTO.auto_select]]._desc);
+        pros::delay(20);
     }
 }
 
-void competition_initialize() {}
+void competition_initialize() {when_competition_initialize();}
 
  // ==================== match control functions ==================== //
  // autonomous function
-void autonomous() {}
+void autonomous() {AUTO.get_map()[AUTO.get_name_array()[AUTO.auto_select]].run();}
 
 // operator control function
 void opcontrol() {
@@ -40,4 +53,4 @@ void opcontrol() {
 }
 
 // robot disabled function
-void disabled() {}
+void disabled() {when_disabled();}
