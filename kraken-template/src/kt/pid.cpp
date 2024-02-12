@@ -9,7 +9,7 @@ double kt::util::PIDController::calculate(double current_value) {
 	    return (error * kP + error_total * kI + error_change * kD);
 }
 bool kt::util::PIDController::goal_met() {
-	    if (fabs(error_prev) < range) {
+	    if (fabs(error_prev) < range || bypass) {
 		    return true;
 	    }
 	    return false;

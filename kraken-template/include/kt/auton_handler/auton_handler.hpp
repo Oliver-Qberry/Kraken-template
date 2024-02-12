@@ -6,7 +6,6 @@
 #include <vector>
 
 namespace kt {
-//namespace auton_handler {
 class AUTONS {
 private:
     int auto_select = 0;
@@ -40,10 +39,7 @@ public:
     void run_current_auton() {auton_node_vector[auto_select].run();}
 
 
-    void initialize() {
-        master.set_text(0, 0, current_name());
-        pros::lcd::set_text(1, current_name());
-        pros::lcd::set_text(2, current_desc());
+    void auton_select_task() {
         if (auto_select_type == 0) {
             // controller
             if (master.get_digital_new_press(controller_keybind)) {
@@ -52,5 +48,4 @@ public:
         }
     }
 };
-//}
 }

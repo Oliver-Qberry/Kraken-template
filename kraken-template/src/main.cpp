@@ -50,17 +50,23 @@ kt::Rotation rotation;
 void initialize() {
     // device init
     lcd::initialize();
-    lcd::set_text(0, "2605A");
+    
     initialize_devices();
 
     // chassis init
     chassis.opcontrol_split_standard();
+	//chassis.opcontrol_split_flipped();
+	//chassis.opcontrol_arcade_standard();
+	//chassis.opcontrol_arcade_flipped();
+	//chassis.opcontrol_tank();
     chassis.initialize();
 
     // sets up auton class
     initialize_auton();
     // starts the auto select task
-    Task task_auton(initialize_task);
+    Task task_auton(auton_select_task);
+	// starts lcd print task
+	Task task_lcd(print_to_lcd_task);
 
 }
 
@@ -70,15 +76,14 @@ void autonomous() {autons.run_current_auton();}
 
 
 void opcontrol() {
-    chassis.CURRENT_BRAKE = E_MOTOR_BRAKE_COAST;
+	chassis.set_brake_modes(E_MOTOR_BRAKE_COAST);
     while (true) {
 
-        motor.opcontrol("intake");
-        chassis.opcontrol();
-
-        AdiDigitalOut.opcontrol("test");
 
 
+
+
+		chassis.opcontrol();
 
         pros::delay(kt::util::DELAY_TIME);
     }

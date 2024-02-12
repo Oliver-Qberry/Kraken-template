@@ -9,7 +9,7 @@
 
 void kt::Chassis::initialize() {
     imu.reset();
-
+    reset_integrated_encoders();
 }
 
 kt::Chassis::Chassis(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports,
@@ -27,6 +27,7 @@ kt::Chassis::Chassis(std::vector<int> left_motor_ports, std::vector<int> right_m
     for (auto i : right_motor_ports) {
         pros::Motor motor(abs(i));
         motor.set_reversed(kt::util::reversed_active(i));
+        motor.set_brake_mode(brake_type);
         right_motors.push_back(motor);
     }
 }
@@ -96,48 +97,64 @@ void kt::Chassis::brake() {
     }
 }
 
+void kt::Chassis::set_brake_modes(pros::motor_brake_mode_e_t brake) {
+    for (auto motor : left_motors) {
+        motor.set_brake_mode(brake);
+    }
+    for (auto motor : left_motors) {
+        motor.set_brake_mode(brake);
+    }
+}
 
 
 
-// NEEDS TO BE TESTED MORE
-void kt::Chassis::move(double distance, double angle) {
-    // setup drive pid
-    drive_pid_controller.reset();
+
+void kt::Chassis::move(double distance, double angle, double turn_multi) {
+    // reset drive motor encoders
     reset_integrated_encoders();
+    // get the gearset ratio of the motor encoder
     double gearset_rpm_ratio = ((50.0)/((motor_rpm)/(3600.0)))*((motor_rpm)/(wheel_rpm));
+    // get the actual distance needed to travel in ticks
     double distanceIn = (((gearset_rpm_ratio*distance)/wheel_diameter))/2;
-    drive_pid_controller.set_goal(distanceIn, drive_pid_karr[3]);
+    // setup drive pid controller
+    drive_pid_controller.reset();
+    drive_pid_controller.set_goal(distanceIn);
     double current_pos, drive_output;
-    // setup turn pid
+    // get the target angle
     double target_angle = imu.get_heading() + angle;
+    // setup turn pid controller
     turn_pid_controller.reset();
-    turn_pid_controller.set_goal(0, turn_pid_karr[3]);
+    turn_pid_controller.set_goal(target_angle);
     double turn_error, turn_output;
+    // if turn multi is 0 bypass the pid so goalmet will always be true
+    if (turn_multi == 0) {
+        turn_pid_controller.bypass = true;
+    } else {
+        turn_pid_controller.bypass = false;
+    }
+    // create direction integer variables
     int left_dir, right_dir;
     // pid loop
     do {
+        // find the current position with the motor encoders
         current_pos = get_average_integrated_encoders_positions();
+        // get the drive pid output
         drive_output = drive_pid_controller.calculate(current_pos);
+        // get the current turn error (target - current)
         turn_error = kt::util::imu_error_calc(imu.get_heading(), target_angle);
+        // get the turn pid output
         turn_output = turn_pid_controller.calculate(turn_error);
-        //////////////// TEST
+        // check the direction of the turn output to set signs
         left_dir = (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0) ? -1 : 1;
         right_dir = (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0) ? 1 : -1;
-        ///////////////// TEST
-        // MAY NOT NEED THE ABOVE STUFF
+        // set moves voltage to outputs
         for (auto motor : left_motors) {
-            motor.move(drive_output + (turn_error*left_dir));
+            motor.move(drive_output + (turn_error*left_dir*turn_multi));
         }
         for (auto motor : right_motors) {
-            motor.move(drive_output + (turn_error*right_dir));
+            motor.move(drive_output + (turn_error*right_dir*turn_multi));
         }
-
-        /////////////////////////////////////////////////////
-        // add a system to get error in the system
-        /////////////////////////////////////////////////////
-        //std::cout<<drive_output<<std::endl;
-        //pros::lcd::set_text(4, std::to_string(turn_error));
-
+        // delay
         pros::delay(kt::util::DELAY_TIME);
     } while (!drive_pid_controller.goal_met() || !turn_pid_controller.goal_met());
     brake();
@@ -183,10 +200,10 @@ void kt::Chassis::turn(int voltage) {
 }
 
 void kt::Chassis::opcontrol() {
-        int ana_x = master.get_analog(controller_x_id); // 
-        int ana_y = master.get_analog(controller_y_id);
-        ana_x = (abs(ana_x) > JOYSTICK_X_THRESHOLD) ? ana_x : 0;
-        ana_y = (abs(ana_y) > JOYSTICK_Y_THRESHOLD) ? ana_y : 0;
+    int ana_x = master.get_analog(controller_x_id);
+    int ana_y = master.get_analog(controller_y_id);
+    ana_x = (abs(ana_x) > JOYSTICK_X_THRESHOLD) ? ana_x : 0;
+    ana_y = (abs(ana_y) > JOYSTICK_Y_THRESHOLD) ? ana_y : 0;
     if (_tank_drive) {
 
         for (auto motor : left_motors) {

@@ -1,0 +1,44 @@
+#include "auton.hpp"
+#include "kt/util.hpp"
+#include "pros/motors.h"
+#include "pros/rtos.hpp"
+
+// ==================== add your auto functions here ==================== //
+/*
+this is were you can write your auto functions.
+just make sure to add them to the autons class when your done.
+*/
+
+void test1() {
+    std::cout<<"test1"<<std::endl;
+    chassis.set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
+    chassis.drive_pid_constants(.5, 0, 0, 1);
+    chassis.turn_pid_constants(1, 0, 0, 10);
+    chassis.move(5, 90);
+}
+void test2() {
+    std::cout<<"test2"<<std::endl;
+}
+
+void test3() {
+    std::cout<<"test3"<<std::endl;
+}
+
+// ==================== save your auto functions here ==================== //
+/*
+function called in initialize to set up the autons. 
+add your auton by typing autons.add_auton("your autons name", "your autons description", your_autons_function);
+doing so will add your auton to the auton class which handles the auto select and running the auton function for you.
+*/
+void initialize_auton() {
+    autons.add_auton("test1", "d1", test1);
+    autons.add_auton("test2", "d2", test2);
+    autons.add_auton("test3", "d3", test3);
+}
+
+void auton_select_task() {
+    while (true) {
+        autons.auton_select_task();
+        pros::delay(kt::util::DELAY_TIME);
+    }
+}

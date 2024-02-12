@@ -4,12 +4,12 @@ namespace kt {
 namespace util {
 
 class PIDController {
-    private:
+    public:
 	double kP, kI, kD;
 	double error_prev, error_total, error_change;
-    public:
 	double range, goal;
-	//PIDController();
+    bool bypass = false;
+
     void set_pid_constants(double kP, double kI, double kD) {
 		this->kP = kP;
 		this->kI = kI;

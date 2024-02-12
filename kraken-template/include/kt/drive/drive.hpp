@@ -25,7 +25,7 @@ namespace kt {
             double JOYSTICK_X_SENSITIVITY = 1;
             double JOYSTICK_Y_SENSITIVITY = 1;
 
-            pros::motor_brake_mode_e_t CURRENT_BRAKE = pros::E_MOTOR_BRAKE_COAST;
+            //pros::motor_brake_mode_e_t CURRENT_BRAKE = pros::E_MOTOR_BRAKE_COAST;
 
             double max_volts = 127;
 
@@ -40,9 +40,7 @@ namespace kt {
             double wheel_diameter;
 
             // pid objects
-            double drive_pid_karr[4] = {0, 0, 0, 0};
             kt::util::PIDController drive_pid_controller;
-            double turn_pid_karr[4] = {0, 0, 0, 0};
             kt::util::PIDController turn_pid_controller;
 
             void initialize();  
@@ -64,7 +62,7 @@ namespace kt {
             
             void turn_pid_constants(double turn_kP, double turn_kI, double turn_kD, double turn_range);
 
-            void move(double distance, double angle);
+            void move(double distance, double angle, double turn_multi = 1);
 
             void move(int voltage);
 
@@ -72,12 +70,12 @@ namespace kt {
 
             void brake();
 
+            void set_brake_modes(pros::motor_brake_mode_e_t brake);
+
             void opcontrol();
 
             void reset_integrated_encoders();
 
             double get_average_integrated_encoders_positions();
-
-            
     };
 }

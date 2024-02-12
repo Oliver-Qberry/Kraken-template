@@ -74,9 +74,6 @@ void opcontrol(void);
 /**
  * You can add C++-only headers here
  */
-
-#include "kt/api.hpp"
-
 //#include <iostream>
 #endif
 
