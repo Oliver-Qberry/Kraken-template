@@ -91,5 +91,5 @@ namespace kt {
             void reset_integrated_encoders();
             // gets the average motor encoder values
             double get_average_integrated_encoders_positions();
-    };
-}
+    }; // end of chassis class
+} // end of kt namespace
