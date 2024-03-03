@@ -1,4 +1,5 @@
 #include "auton.hpp"
+#include "config.hpp"
 #include "kt/util.hpp"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
@@ -11,15 +12,10 @@ just make sure to add them to the autons class when your done.
 
 void test1() {
     std::cout<<"test1"<<std::endl;
-    chassis.set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
-    chassis.drive_pid_constants(.5, 0, 0, 1);
-    chassis.turn_pid_constants(1, 0, 0, 10);
-    chassis.move(5, 90);
 }
 void test2() {
     std::cout<<"test2"<<std::endl;
 }
-
 void test3() {
     std::cout<<"test3"<<std::endl;
 }

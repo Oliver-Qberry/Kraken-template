@@ -14,7 +14,7 @@ using namespace v5;
 
 void initialize_devices() {
 // define your devices here using their subclasses for them to be brought to both auton and main files
-
+lcd::initialize();
 
 
 }
