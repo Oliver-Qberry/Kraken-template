@@ -2,23 +2,27 @@
 
 #include "kt/devices/rotation/rotation_node.hpp"
 #include "pros/rotation.hpp"
+
 #include <string>
 #include <unordered_map>
 
 namespace kt {
+// class for handling rotation sensor
 class Rotation {
     private:
+    // rotation sensor node map
     std::unordered_map<std::string, rotation_node> node_map;
+
     public:
+    // adds a new rotation node to the handler.
+    /*
+    parameters:
+        name.
+        port.
+    */
+    void new_rotation(std::string name, int port);
 
-    void new_rotation(std::string name, int port) {
-        pros::Rotation new_rot(port);
-        node_map[name].rotation.clear();
-        node_map[name].rotation.push_back(new_rot);
-    }
-
-    pros::Rotation get_rotation(std::string name) {
-        return node_map[name].rotation.front();
-    }
+    //gets the rotation sensor by its name
+    pros::Rotation get_rotation(std::string name);
 };
 }

@@ -2,95 +2,91 @@
 
 #include "kt/devices/motor/motor_node.hpp"
 #include "pros/motors.hpp"
+
 #include <string>
 #include <unordered_map>
 
-
 namespace kt {
+// class to handle motors
 class Motor {
     private:
+    // motor node map
     std::unordered_map<std::string, motor_node> node_map;
+
     public:
+    // add a new motor to the handler (no complex info)
+    /*
+    parameters:
+        name.
+        port.
+    */
+    void new_motor(std::string name, int port);
 
-    void new_motor(std::string name, int port) {
-        pros::Motor new_mot(port);
-        node_map[name].motor.clear();
-        node_map[name].motor.push_back(new_mot);
-    }
-
+    // add a new motor to the handler (with data for opc, no rev)
+    /*
+    parameters:
+        name.
+        port.
+        keybind.
+        press type.
+    */
     void new_motor(std::string name, int port, 
-                   pros::controller_digital_e_t keybind, kt::e_press_type press_type) {
-        pros::Motor new_mot(port);
-        node_map[name].motor.clear();
-        node_map[name].motor.push_back(new_mot);
-        node_map[name]._keybind = keybind;
-        node_map[name]._press_type = press_type;
-        node_map[name]._has_data_for_opc = true;
-    }
+                   pros::controller_digital_e_t keybind, kt::e_press_type press_type);
 
+    // add a new motor to the handler (with data for opc, with rev)
+    /*
+    parameter:
+        name.
+        port.
+        keybind.
+        press type
+        reverse keybind
+        reverse press type
+    */
     void new_motor(std::string name, int port, 
                pros::controller_digital_e_t keybind, kt::e_press_type press_type, 
-               pros::controller_digital_e_t reverse_keybind, kt::e_press_type reverse_press_type) {
-        pros::Motor new_mot(port);
-        node_map[name].motor.clear();
-        node_map[name].motor.push_back(new_mot);
-        node_map[name]._keybind = keybind;
-        node_map[name]._press_type = press_type;
-        node_map[name]._reverse_keybind = reverse_keybind;
-        node_map[name]._reverse_press_type = reverse_press_type;
-        node_map[name]._has_data_for_opc = true;
-        node_map[name]._has_reverse_data = true;
-    }
+               pros::controller_digital_e_t reverse_keybind, kt::e_press_type reverse_press_type);
 
-    void new_motor(std::string name, int port, pros::v5::MotorGears motor_gearset, 
+    // add a new PID motor to the handler (with data for opc, pid)
+    /*
+    parameter:
+        name.
+        port.
+        motor gearset.
+        target velocity.
+        vector<int> pid constants
+        pid exit range
+    */
+    void new_motor(std::string name, int port, pros::controller_digital_e_t keybind, e_press_type press_type, pros::v5::MotorGears motor_gearset, 
                    double target_velocity, 
-                   std::vector<double> pid_k_constants, double range = 0) {
-        pros::Motor new_mot(port, motor_gearset);
-        node_map[name].motor.clear();
-        node_map[name].motor.push_back(new_mot);
-        node_map[name].motor_pid_controller.set_pid_constants(pid_k_constants[0], pid_k_constants[1], pid_k_constants[2]);
-        node_map[name].motor_pid_controller.set_goal(target_velocity, range);
-        node_map[name].motor_pid_controller.reset();
-        node_map[name]._has_data_for_opc = true;
-        node_map[name]._has_data_for_pid = true;
-    }
+                   std::vector<double> pid_k_constants, double range = 0);
 
-    pros::Motor get_motor(std::string name) {
-        return node_map[name].motor.front();
-    }
+    // gets motor by its name
+    pros::Motor get_motor(std::string name);
 
-    void set_brake_mode(std::string name, pros::motor_brake_mode_e_t brake) {
-        node_map[name].motor.front().set_brake_mode(brake);
-    }
+    // sets a motors brake mode by its name
+    void set_brake_mode(std::string name, pros::motor_brake_mode_e_t brake);
 
-    void opcontrol(std::string name) {
-        node_map[name].opcontrol();
-    }
+    // runs the opcontrol function for a motor by its name
+    void opcontrol(std::string name);
 
-    motor_node get_motor_data(std::string name) {
-        return node_map[name];
-    }
+    // gets node and motor data by its name
+    motor_node get_motor_data(std::string name);
 
-    void pid(std::string name, bool pid_on) {
-        // flip _pid_on to pid_on
-        node_map[name]._pid_on = pid_on;
-    }
+    // pid on / off by name
+    void pid(std::string name, bool pid_on);
 
-    void pid_set_target_velocity(std::string name, double target_velocity) {
-        node_map[name].motor_pid_controller.set_goal(target_velocity);
-    }
+    // set a motors pid target velocity
+    void pid_set_target_velocity(std::string name, double target_velocity);
 
-    void pid_set_k_constants(std::string name, std::vector<double> pid_k_constants) {
-        node_map[name].motor_pid_controller.set_pid_constants(
-            pid_k_constants[0],pid_k_constants[1],pid_k_constants[2]);
-    }
+    // sets a motors P I D constants
+    void pid_set_k_constants(std::string name, std::vector<double> pid_k_constants);
 
-    void pid_set_range(std::string name, double range) {
-        node_map[name].motor_pid_controller.set_range(range);
-    }
+    // sets a motors exit range
+    void pid_set_range(std::string name, double range);
 
-    bool pid_is_goal_met(std::string name) {
-        return node_map[name].motor_pid_controller.goal_met();
-    }
-};
-}
+    // checks if a motors pid goal is met. returns a bool
+    bool pid_is_goal_met(std::string name);
+
+}; // end of Motor class
+} // end of kt namespace

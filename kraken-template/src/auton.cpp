@@ -1,8 +1,7 @@
+// kt includes
 #include "auton.hpp"
 #include "config.hpp"
 #include "kt/util.hpp"
-#include "pros/motors.h"
-#include "pros/rtos.hpp"
 
 // ==================== add your auto functions here ==================== //
 /*
@@ -32,6 +31,11 @@ void initialize_auton() {
     autons.add_auton("test3", "d3", test3);
 }
 
+// ==================== auton select function ==================== //
+/*
+this is a task function used to check inputs for the auton select function. 
+DO NOT CHANGE ANYTHING IN THIS FUNCTION UNLESS YOU KNOW WHAT YOU ARE DOING.
+*/
 void auton_select_task() {
     while (true) {
         autons.auton_select_task();
