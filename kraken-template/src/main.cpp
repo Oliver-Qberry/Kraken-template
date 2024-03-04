@@ -40,7 +40,7 @@ kt::Chassis chassis(
     {-14, -15, -16}, 
 
     // pass a brake type
-    // found in pors::E_MOTOR_BRAKE_(type) or just uncomment one of the below (we recommend coast)
+    // found in pros::E_MOTOR_BRAKE_(type) or just uncomment one of the below (we recommend coast)
     E_MOTOR_BRAKE_COAST, 
     //E_MOTOR_BRAKE_BRAKE,
     //E_MOTOR_BRAKE_HOLD,
@@ -201,7 +201,6 @@ void opcontrol() {
 /*
 runs the user autonomous code. This function will be started whenever the robot is enabled via
 the field management system or the vex competition switch in the autonomous mode. 
-
 
 if the robot is disabled or communications is lost, the autonomous task
 will be stopped. re-enabling the robot will restart the task, not re-start it

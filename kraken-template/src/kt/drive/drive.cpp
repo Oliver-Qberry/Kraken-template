@@ -224,10 +224,11 @@ void kt::Chassis::opcontrol() {
         }
     } else { // if in any of the other control moves
         for (auto motor : left_motors) {
-            motor.move(ana_y*JOYSTICK_Y_SENSITIVITY-ana_x*JOYSTICK_X_SENSITIVITY);
-        }
-        for (auto motor : right_motors) {
             motor.move(ana_y*JOYSTICK_Y_SENSITIVITY+ana_x*JOYSTICK_X_SENSITIVITY);
         }
+        for (auto motor : right_motors) {
+            motor.move(ana_y*JOYSTICK_Y_SENSITIVITY-ana_x*JOYSTICK_X_SENSITIVITY);
+        }
+        // if you are having issues with the direction of turning you can swap the plus and minus
     }
 } // end of opcontrol function
