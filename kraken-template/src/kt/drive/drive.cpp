@@ -117,7 +117,7 @@ void kt::Chassis::set_brake_modes(pros::motor_brake_mode_e_t brake) {
         motor.set_brake_mode(brake);
     }
     // set brake for right motors
-    for (auto motor : left_motors) {
+    for (auto motor : right_motors) {
         motor.set_brake_mode(brake);
     }
 }
