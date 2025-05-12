@@ -122,7 +122,7 @@ void kt::Chassis::brake()
         motor.brake();
     }
     // brake right motors
-    for (auto motor : left_motors)
+    for (auto motor : right_motors)
     {
         motor.brake();
     }
