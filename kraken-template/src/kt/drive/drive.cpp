@@ -190,6 +190,7 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
         {
             motor.move(drive_output + (turn_error * left_dir * turn_multi));
         }
+        // should one of these subtract
         for (auto motor : right_motors)
         {
             motor.move(drive_output + (turn_error * right_dir * turn_multi));
