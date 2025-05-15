@@ -197,9 +197,13 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
         }
         // delay
         pros::delay(kt::util::DELAY_TIME);
-    } while (!drive_pid_controller.goal_met() || !turn_pid_controller.goal_met());
+    } while ((!drive_pid_controller.goal_met() && distance != 0) || (!turn_pid_controller.goal_met()) && angle != 0);
     brake();
 } // end of move complex function
+
+void kt::Chassis::move(double x, double y, int theta)
+{
+}
 
 void kt::Chassis::drive_pid_constants(double drive_kP, double drive_kI, double drive_kD, double drive_range)
 {
