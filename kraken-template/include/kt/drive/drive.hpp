@@ -85,6 +85,9 @@ namespace kt
         void move(double x, double y, int theta);
         // turn function. pass a voltage (-127 to 127)
         void turn(int voltage);
+
+        void turnPID(int angle);
+        void movePID(int distance);
         // brake the drive motors
         void brake();
         // set the drive motor brake modes

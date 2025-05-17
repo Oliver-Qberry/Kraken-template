@@ -193,13 +193,48 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
         // should one of these subtract
         for (auto motor : right_motors)
         {
-            motor.move(drive_output + (turn_error * right_dir * turn_multi));
+            motor.move(drive_output - (turn_error * right_dir * turn_multi));
         }
         // delay
         pros::delay(kt::util::DELAY_TIME);
     } while ((!drive_pid_controller.goal_met() && distance != 0) || (!turn_pid_controller.goal_met()) && angle != 0);
     brake();
 } // end of move complex function
+
+void kt::Chassis::movePID(int distance)
+{
+    reset_integrated_encoders();
+
+    double gearset_rpm_ratio = ((50.0) / ((motor_rpm) / (3600.0))) * ((motor_rpm) / (wheel_rpm));
+    // get the actual distance needed to travel in ticks
+    double distanceIn = (((gearset_rpm_ratio * distance) / wheel_diameter)) / 2;
+
+    drive_pid_controller.reset();
+    drive_pid_controller.set_goal(distanceIn);
+
+    double current_pos, drive_output;
+    do
+    {
+        current_pos = get_average_integrated_encoders_positions();
+
+        drive_output = drive_pid_controller.calculate(current_pos);
+
+        for (auto motor : left_motors)
+        {
+            motor.move(drive_output /*+ (turn_error * left_dir * turn_multi)*/);
+        }
+        // should one of these subtract
+        for (auto motor : right_motors)
+        {
+            motor.move(drive_output /*+ (turn_error * right_dir * turn_multi)*/);
+        }
+        // delay
+        pros::delay(kt::util::DELAY_TIME);
+
+    } while (!drive_pid_controller.goal_met());
+    brake();
+}
+void kt::Chassis::turnPID(int angle) {}
 
 void kt::Chassis::move(double x, double y, int theta)
 {
