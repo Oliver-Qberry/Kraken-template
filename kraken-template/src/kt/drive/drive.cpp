@@ -183,17 +183,33 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
         // get the turn pid output
         turn_output = turn_pid_controller.calculate(turn_error);
         // check the direction of the turn output to set signs
-        left_dir = (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0) ? -1 : 1;
-        right_dir = (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0) ? 1 : -1;
+
+        // left_dir = (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0) ? -1 : 1;
+        // right_dir = (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0) ? 1 : -1;
+        if (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0)
+        {
+            left_dir = -1;
+            right_dir = 1;
+        }
+        else if (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) < 0)
+        {
+            left_dir = 1;
+            right_dir = -1;
+        }
+        else
+        {
+            left_dir = 0;
+            right_dir = 0;
+        }
         // set moves voltage to outputs
         for (auto motor : left_motors)
         {
-            motor.move(drive_output + (turn_error * left_dir * turn_multi));
+            motor.move(drive_output + (turn_error * left_dir * turn_multi)); // why do we need turn multipliery
         }
-        // should one of these subtract
+        // should one of these subtract, maybe not becuase direction is + or -
         for (auto motor : right_motors)
         {
-            motor.move(drive_output - (turn_error * right_dir * turn_multi));
+            motor.move(drive_output + (turn_error * right_dir * turn_multi));
         }
         // delay
         pros::delay(kt::util::DELAY_TIME);
