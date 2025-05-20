@@ -11,6 +11,9 @@ FWDIR:=$(ROOT)/firmware
 BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
 INCDIR=$(ROOT)/include
+#INCDIR += $(CURDIR)/googletest/googletest/include
+
+#SRCS += $(wildcard googletest/googletest/src/*.cc)
 
 WARNFLAGS+=
 EXTRA_CFLAGS=
