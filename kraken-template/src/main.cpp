@@ -12,8 +12,6 @@ template is made for SHS VRC teams and is based off of what we have at SHS and n
 #include "auton.hpp"
 // other includes here
 
-
-
 /*
 a few different namespaces are adding for your convenience.
 HOWEVER remember that there is some crossover between kt and pros so you may still have to use them in some cases.
@@ -22,8 +20,6 @@ using namespace std;
 using namespace pros;
 using namespace v5;
 using namespace kt;
-
-
 
 // ==================== chassis setup ==================== //
 /*
@@ -35,18 +31,18 @@ kt::Chassis chassis(
     // the first 2 parameters of the chassis class definition are integer vectors of the motors ports on the brain.
     // note that a negative integer will make the motor be reversed
     // first pass a int vector of the left motor ports
-    {11, 12, 13}, 
+    {-10, -9, -8},
     // second pass a int vector of the right motor ports
-    {-14, -15, -16}, 
+    {16, 15, 14},
 
     // pass a brake type
     // found in pros::E_MOTOR_BRAKE_(type) or just uncomment one of the below (we recommend coast)
-    E_MOTOR_BRAKE_COAST, 
-    //E_MOTOR_BRAKE_BRAKE,
-    //E_MOTOR_BRAKE_HOLD,
+    E_MOTOR_BRAKE_COAST,
+    // E_MOTOR_BRAKE_BRAKE,
+    // E_MOTOR_BRAKE_HOLD,
 
     // the imu port which is used to calculate the robots heading
-    17, 
+    18,
 
     // the rpm of the motor
     // remember that red = 100, green = 200, blue = 600
@@ -63,8 +59,6 @@ kt::Chassis chassis(
 
 ); // end of chassis class setup
 
-
-
 // ==================== auton selector setup ==================== //
 /*
 this is the main autons class definition. it is used to handle all the autons you make and has build in auton
@@ -76,8 +70,6 @@ kt::AUTONS autons(
     E_CONTROLLER_DIGITAL_DOWN
 
 ); // end of autons class setup
-
-
 
 /*
 these are the device class definitions. they store information about the devices on your robot and allow you
@@ -96,25 +88,24 @@ kt::IMU imu;
 kt::Motor motor;
 kt::Rotation rotation;
 
-
-
 // ==================== initialize ==================== //
 /*
-the initialize function is run when the program is started. 
+the initialize function is run when the program is started.
 
-all other competition modes are blocked by initialize so it is recommended 
+all other competition modes are blocked by initialize so it is recommended
 to keep execution time for this mode under a few seconds.
 */
-void initialize() {
+void initialize()
+{
     /*
     this is were you can change the control scheme for your drivetrain during opcontrol.
     simply uncomment one of the lines below.
     */
     chassis.opcontrol_split_standard();
-	//chassis.opcontrol_split_flipped();
-	//chassis.opcontrol_arcade_standard();
-	//chassis.opcontrol_arcade_flipped();
-	//chassis.opcontrol_tank();
+    // chassis.opcontrol_split_flipped();
+    // chassis.opcontrol_arcade_standard();
+    // chassis.opcontrol_arcade_flipped();
+    // chassis.opcontrol_tank();
 
     // ========== other initialize functions ========== //
     // chassis initialize -> chassis
@@ -127,14 +118,12 @@ void initialize() {
     // ========== task functions ========== //
     // starts the auto select task
     Task task_auton(auton_select_task);
-	// starts lcd print task
-	Task task_lcd(print_to_lcd_task);
+    // starts lcd print task
+    Task task_lcd(print_to_lcd_task);
 
     // put anything else you want to add below here
 
 } // end of initialize function
-
-
 
 // ==================== competition initialize ==================== //
 /*
@@ -147,8 +136,6 @@ this is not used in the base kraken template but feel free to add to it.
 */
 void competition_initialize() {}
 
-
-
 // ==================== disabled ==================== //
 /*
 runs while the robot is in the disabled state of field management system or
@@ -159,8 +146,6 @@ this is not used in the base kraken template but feel free to add to it.
 */
 void disabled() {}
 
-
-
 // ==================== operator control ==================== //
 /*
 runs the operator control code. this function will be started whenever the robot is enabled via
@@ -168,39 +153,33 @@ the field management system or the vex competition switch in the operator contro
 
 if no competition control is connected, this function will run immediately following initialize().
 
-if the robot is disabled or communications is lost, the operator control task will be stopped. 
+if the robot is disabled or communications is lost, the operator control task will be stopped.
 re-enabling the robot will restart the task, not resume it from where it left off.
 */
-void opcontrol() {
+void opcontrol()
+{
     // the while loop constantly loops the function while the task is active
-    while (true) {
-
-
+    while (true)
+    {
 
         // your operator control code should go here
-
-
 
         // this is an example of how you can use the motors build in opcontrol function
         // this is the same motor setup in initialize_devices in config.cpp
         motor.opcontrol("motor");
 
-
         // this is how you can call the build in opcontrol function for the chassis class
-		chassis.opcontrol();
-
+        chassis.opcontrol();
 
         // a small delay is needed to prevent issues
         delay(kt::util::DELAY_TIME);
     } // end of while loop
 } // end of opcontrol function
 
-
-
 // ==================== autonomous ==================== //
 /*
 runs the user autonomous code. This function will be started whenever the robot is enabled via
-the field management system or the vex competition switch in the autonomous mode. 
+the field management system or the vex competition switch in the autonomous mode.
 
 if the robot is disabled or communications is lost, the autonomous task
 will be stopped. re-enabling the robot will restart the task, not re-start it
@@ -209,4 +188,4 @@ from where it left off.
 with the kraken template and autons class, it will run whatever the current auton is during autonomous.
 the current auton can be changed by using the auton selector.
 */
-void autonomous() {autons.run_current_auton();}
+void autonomous() { autons.run_current_auton(); }

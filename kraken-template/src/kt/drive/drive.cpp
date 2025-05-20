@@ -149,7 +149,8 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
     // get the gearset ratio of the motor encoder
     double gearset_rpm_ratio = ((50.0) / ((motor_rpm) / (3600.0))) * ((motor_rpm) / (wheel_rpm));
     // get the actual distance needed to travel in ticks
-    double distanceIn = (((gearset_rpm_ratio * distance) / wheel_diameter)) / 2;
+    // double distanceIn = (((gearset_rpm_ratio * distance) / wheel_diameter)) / 2;
+    double distanceIn = (distance / (3.14 * wheel_diameter)) * (motor_rpm / wheel_rpm) * 3600;
     // setup drive pid controller
     drive_pid_controller.reset();
     drive_pid_controller.set_goal(distanceIn);
@@ -184,9 +185,10 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
         turn_output = turn_pid_controller.calculate(turn_error);
         // check the direction of the turn output to set signs
 
-        // left_dir = (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0) ? -1 : 1;
-        // right_dir = (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0) ? 1 : -1;
-        if (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0)
+        left_dir = (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0) ? -1 : 1;
+        right_dir = (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0) ? 1 : -1;
+        // if it drifts off cource we want it to correct
+        /*if (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0)
         {
             left_dir = -1;
             right_dir = 1;
@@ -200,7 +202,7 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
         {
             left_dir = 0;
             right_dir = 0;
-        }
+        }*/
         // set moves voltage to outputs
         for (auto motor : left_motors)
         {
