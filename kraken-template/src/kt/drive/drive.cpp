@@ -196,21 +196,6 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
         left_dir = (kt::util::sgn(turn_error));
         right_dir = (kt::util::sgn(turn_error)) * -1;
         // if it drifts off cource we want it to correct
-        /*if (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0)
-        {
-            left_dir = -1;
-            right_dir = 1;
-        }
-        else if (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) < 0)
-        {
-            left_dir = 1;
-            right_dir = -1;
-        }
-        else
-        {
-            left_dir = 0;
-            right_dir = 0;
-        }*/
         // set moves voltage to outputs
         for (auto motor : left_motors)
         {
@@ -225,6 +210,8 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
         pros::delay(kt::util::DELAY_TIME);
     } while ((!drive_pid_controller.goal_met() && distance != 0) || (!turn_pid_controller.goal_met()) /* && angle != 0*/);
     brake();
+
+    // TODO: delay by a small amount? jsut for smoother transition between commands
 } // end of move complex function
 
 void kt::Chassis::movePID(int distance)
