@@ -142,6 +142,13 @@ void kt::Chassis::set_brake_modes(pros::motor_brake_mode_e_t brake)
     }
 }
 
+/*TODO: problems
+- drifting
+- turn exiting loop
+- turn power is to much, using .5 multiplier
+- add a slight delay after finishing a command/ at the end of this function .3-.6 seconds
+*/
+
 void kt::Chassis::move(double distance, double angle, double turn_multi)
 {
     // reset drive motor encoders
@@ -156,6 +163,7 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
     drive_pid_controller.set_goal(distanceIn);
     double current_pos, drive_output;
     // get the target angle
+    imu.set_heading(0);
     double target_angle = imu.get_heading() + angle;
     // setup turn pid controller
     turn_pid_controller.reset();
@@ -185,8 +193,8 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
         turn_output = turn_pid_controller.calculate(turn_error);
         // check the direction of the turn output to set signs
 
-        left_dir = (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0) ? -1 : 1;
-        right_dir = (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0) ? 1 : -1;
+        left_dir = (kt::util::sgn(turn_error));
+        right_dir = (kt::util::sgn(turn_error)) * -1;
         // if it drifts off cource we want it to correct
         /*if (kt::util::sgn(kt::util::imu_error_calc(imu.get_heading(), target_angle)) > 0)
         {
@@ -206,16 +214,16 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
         // set moves voltage to outputs
         for (auto motor : left_motors)
         {
-            motor.move(drive_output + (turn_error * left_dir * turn_multi)); // why do we need turn multipliery
+            motor.move(drive_output + (/*turn_error*/ turn_output * left_dir * turn_multi));
         }
         // should one of these subtract, maybe not becuase direction is + or -
         for (auto motor : right_motors)
         {
-            motor.move(drive_output + (turn_error * right_dir * turn_multi));
+            motor.move(drive_output + (/*turn_error*/ turn_output * right_dir * turn_multi));
         }
         // delay
         pros::delay(kt::util::DELAY_TIME);
-    } while ((!drive_pid_controller.goal_met() && distance != 0) || (!turn_pid_controller.goal_met()) && angle != 0);
+    } while ((!drive_pid_controller.goal_met() && distance != 0) || (!turn_pid_controller.goal_met()) /* && angle != 0*/);
     brake();
 } // end of move complex function
 
