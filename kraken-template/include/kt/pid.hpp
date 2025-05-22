@@ -55,6 +55,8 @@ namespace kt
 
             // calculate pid with current value. returns the pids output as a double.
             double calculate(double current_value);
+            // calculate turn pid with current value. returns the pids output as a double.
+            double calculate_turn(double current_error);
             // check if the goal has been met (prev_error within the exit range). returns a bool.
             bool goal_met();
         };

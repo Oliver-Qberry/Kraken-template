@@ -13,11 +13,11 @@ just make sure to add them to the autons class when your done.
 void test1()
 {
     std::cout << "test1" << std::endl;
-    // chassis.drive_pid_constants(.5, .0000001, .0001, 5);
-    // chassis.move(10, 0, 1.0);
-    // chassis.move(-10, 0, 1.0);
-    chassis.turn_pid_constants(.0005, .0000001, .0001, 5); // FIXME: over shot by full turn plus a little, tone down power
-    chassis.move(0, 90, .5);
+    // chassis.drive_pid_constants(.5, .0000001, .0001, 10);
+    // chassis.move(30, 0, 1.0);
+    //   chassis.move(-10, 0, 1.0);
+    chassis.turn_pid_constants(.000005, .0000001, .000001, 10); // FIXME: over shot by full turn plus a little, tone down power
+    chassis.move(0, -90, .5);                                   // TODO: cant turn and drive like in an arc
     // chassis.move(10, 0, 1.0);
 }
 void test2()

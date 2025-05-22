@@ -157,7 +157,7 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
     double gearset_rpm_ratio = ((50.0) / ((motor_rpm) / (3600.0))) * ((motor_rpm) / (wheel_rpm));
     // get the actual distance needed to travel in ticks
     // double distanceIn = (((gearset_rpm_ratio * distance) / wheel_diameter)) / 2;
-    double distanceIn = (distance / (3.14 * wheel_diameter)) * (motor_rpm / wheel_rpm) * 3600;
+    double distanceIn = (distance / (wheel_diameter * 3.14)) * (wheel_rpm / motor_rpm) * (180000 / motor_rpm);
     // setup drive pid controller
     drive_pid_controller.reset();
     drive_pid_controller.set_goal(distanceIn);
@@ -167,7 +167,7 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
     double target_angle = imu.get_heading() + angle;
     // setup turn pid controller
     turn_pid_controller.reset();
-    turn_pid_controller.set_goal(target_angle);
+    turn_pid_controller.set_goal(angle); // target_angle
     double turn_error, turn_output;
     // if turn multi is 0 bypass the pid so goalmet will always be true
     if (turn_multi == 0)
@@ -188,9 +188,9 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
         // get the drive pid output
         drive_output = drive_pid_controller.calculate(current_pos);
         // get the current turn error (target - current)
-        turn_error = kt::util::imu_error_calc(imu.get_heading(), target_angle);
+        turn_error = kt::util::imu_error_calc(imu.get_heading(), angle); // target angle
         // get the turn pid output
-        turn_output = turn_pid_controller.calculate(turn_error);
+        turn_output = turn_pid_controller.calculate_turn(turn_error);
         // check the direction of the turn output to set signs
 
         left_dir = (kt::util::sgn(turn_error));
