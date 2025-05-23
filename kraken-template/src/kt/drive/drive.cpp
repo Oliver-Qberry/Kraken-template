@@ -147,6 +147,7 @@ void kt::Chassis::set_brake_modes(pros::motor_brake_mode_e_t brake)
 - turn exiting loop
 - turn power is to much, using .5 multiplier
 - add a slight delay after finishing a command/ at the end of this function .3-.6 seconds
+- filter the derivative
 */
 
 void kt::Chassis::move(double distance, double angle, double turn_multi)

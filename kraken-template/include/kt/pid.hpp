@@ -13,6 +13,7 @@ namespace kt
             double kP, kI, kD;
             // pid errors
             double error_prev, error_total, error_change;
+            double max_integral = 100.0;
             //
             double range, goal;
             // bypass pid goal met

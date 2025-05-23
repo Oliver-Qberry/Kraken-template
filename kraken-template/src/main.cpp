@@ -161,6 +161,7 @@ void opcontrol()
     // the while loop constantly loops the function while the task is active
     while (true)
     {
+        // TODO: auton writing while in driver control
 
         // your operator control code should go here
 
