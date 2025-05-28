@@ -12,6 +12,7 @@ namespace kt
     private:
         // if in tank drive mode
         bool _tank_drive = false;
+        bool odometry = false;
 
     public:
         // x controller analog channel id
@@ -40,6 +41,16 @@ namespace kt
         double wheel_rpm;
         // saved wheel diameter
         double wheel_diameter;
+        // odometry
+        double odom_wheel_diameter;
+        double horizontal_tracking_center;
+        double vertical_tracking_center;
+        std::vector<pros::Rotation> odom_rotation_sensors;
+        // odometry based position
+        double x = 0, y = 0, theta = 0;
+        double prev_forward_sensor, prev_rotation_sensor, prev_imu_angle;
+        double prev_x, prev_y, prev_theta;
+
         // pid objects
         kt::util::PIDController drive_pid_controller;
         // pid objects
@@ -69,6 +80,9 @@ namespace kt
         void opcontrol_split_standard();
         // double stick opc flipped
         void opcontrol_split_flipped();
+        // enable odometry
+        void enable_odometry(std::vector<int> sensor_ports, double wheel_diameter, double h_tracking_center, double v_tracking_center);
+        bool get_odometry_status();
         // integrated. set drive pid constants and exit range
         void drive_pid_constants(double drive_kP, double drive_kI, double drive_kD, double drive_range);
         // integrated. set turn pid constants and exit range
@@ -82,12 +96,9 @@ namespace kt
         void move(double distance, double angle, double turn_multi = 1);
         // move function. pass a voltage (-127 to 127)
         void move(int voltage);
-        void move(double x, double y, int theta);
+        void move_to(double x, double y, int theta);
         // turn function. pass a voltage (-127 to 127)
         void turn(int voltage);
-
-        void turnPID(int angle);
-        void movePID(int distance);
         // brake the drive motors
         void brake();
         // set the drive motor brake modes
@@ -96,7 +107,10 @@ namespace kt
         void opcontrol();
         // resets the motors encoder values
         void reset_integrated_encoders();
+        // resets the rotation sensors values
+        void reset_odometry_sensors();
         // gets the average motor encoder values
         double get_average_integrated_encoders_positions();
+
     }; // end of chassis class
 } // end of kt namespace

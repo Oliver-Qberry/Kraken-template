@@ -41,8 +41,8 @@ kt::Chassis chassis(
     // E_MOTOR_BRAKE_BRAKE,
     // E_MOTOR_BRAKE_HOLD,
 
-    // the imu port which is used to calculate the robots heading
-    18,
+    // the imu port which is used to calculate the robot's heading
+    7, // 18
 
     // the rpm of the motor
     // remember that red = 100, green = 200, blue = 600
@@ -107,6 +107,18 @@ void initialize()
     // chassis.opcontrol_arcade_flipped();
     // chassis.opcontrol_tank();
 
+    // enable the use of odometry, uncomment to use odometry
+    chassis.enable_odometry(
+        // the ports for the rotation sensors, first one is vertical(forward/backward), second is horizontal
+        // negative is if its reveresed
+        {9, -8},
+        // tracking wheel diameter, mostlikly 2 inch
+        2.0,
+        // the distance in inches from the tracking center to the front/back wheel
+        3.0,
+        // the distance in inches from the tracking center to the left/right wheel
+        1.0);
+
     // ========== other initialize functions ========== //
     // chassis initialize -> chassis
     chassis.initialize();
@@ -116,12 +128,18 @@ void initialize()
     initialize_auton();
 
     // ========== task functions ========== //
+    Task task_odometry(update_position_task_2);
     // starts the auto select task
     Task task_auton(auton_select_task);
     // starts lcd print task
     Task task_lcd(print_to_lcd_task);
 
     // put anything else you want to add below here
+
+    // Default PID vlaues
+    // FIXME: tune these
+    chassis.drive_pid_constants(.5, .000000001, .00001, 10);
+    chassis.turn_pid_constants(.5, .000000001, .00001, 10);
 
 } // end of initialize function
 

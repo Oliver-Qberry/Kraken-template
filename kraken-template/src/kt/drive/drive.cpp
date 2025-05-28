@@ -12,6 +12,10 @@ void kt::Chassis::initialize()
     // resets imu and encoders
     imu.reset();
     reset_integrated_encoders();
+    if (odometry)
+    {
+        reset_odometry_sensors();
+    }
 } // end of init function
 
 kt::Chassis::Chassis(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports,
@@ -37,6 +41,29 @@ kt::Chassis::Chassis(std::vector<int> left_motor_ports, std::vector<int> right_m
         right_motors.push_back(motor);
     }
 } // end of chassis constructor
+
+void kt::Chassis::enable_odometry(std::vector<int> sensor_ports, double wheel_diameter, double h_tracking_center, double v_tracking_center)
+{
+    odometry = true;
+    odom_wheel_diameter = wheel_diameter;
+    horizontal_tracking_center = h_tracking_center;
+    vertical_tracking_center = v_tracking_center;
+    for (auto i : sensor_ports)
+    {
+        pros::Rotation rotation(abs(i));
+        if (i < 0)
+        {
+            rotation.set_reversed(true);
+        }
+        odom_rotation_sensors.push_back(rotation);
+    }
+    prev_forward_sensor = 0;
+    prev_imu_angle = 0;
+    prev_rotation_sensor = 0;
+    prev_theta = 0;
+    prev_x = 0;
+    prev_y = 0;
+}
 
 void kt::Chassis::opcontrol_tank()
 {
@@ -67,7 +94,7 @@ void kt::Chassis::opcontrol_split_standard()
     // set the analog channel ids for split control
     _tank_drive = false;
     controller_x_id = pros::E_CONTROLLER_ANALOG_RIGHT_X;
-    controller_y_id = pros::E_CONTROLLER_ANALOG_LEFT_Y; //
+    controller_y_id = pros::E_CONTROLLER_ANALOG_LEFT_Y;
 }
 
 void kt::Chassis::opcontrol_split_flipped()
@@ -76,6 +103,18 @@ void kt::Chassis::opcontrol_split_flipped()
     _tank_drive = false;
     controller_x_id = pros::E_CONTROLLER_ANALOG_LEFT_X;
     controller_y_id = pros::E_CONTROLLER_ANALOG_RIGHT_Y;
+}
+
+void kt::Chassis::reset_odometry_sensors()
+{
+    for (auto &rotation : odom_rotation_sensors)
+    {
+        rotation.reset_position();
+    }
+}
+bool kt::Chassis::get_odometry_status()
+{
+    return odometry;
 }
 
 void kt::Chassis::reset_integrated_encoders()
@@ -215,7 +254,7 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
     // TODO: delay by a small amount? jsut for smoother transition between commands
 } // end of move complex function
 
-void kt::Chassis::move(double x, double y, int theta)
+void kt::Chassis::move_to(double x, double y, int theta)
 {
 }
 
