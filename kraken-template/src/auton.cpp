@@ -10,14 +10,16 @@ this is were you can write your auto functions.
 just make sure to add them to the autons class when your done.
 */
 
+void odom_test()
+{
+    chassis.move_to({12, 12}, 0);
+}
+
 void test1()
 {
     std::cout << "test1" << std::endl;
-    // chassis.drive_pid_constants(.5, .0000001, .0001, 10);
-    // chassis.move(30, 0, 1.0);
-    //   chassis.move(-10, 0, 1.0);
-    chassis.turn_pid_constants(.000005, .0000001, .000001, 10); // FIXME: over shot by full turn plus a little, tone down power
-    chassis.move(0, -90, .5);                                   // TODO: cant turn and drive like in an arc
+    // FIXME: over shot by full turn plus a little, tone down power
+    chassis.move(12, 0, 1.0); // TODO: cant turn and drive like in an arc
     // chassis.move(10, 0, 1.0);
 }
 void test2()
@@ -37,7 +39,9 @@ doing so will add your auton to the auton class which handles the auto select an
 */
 void initialize_auton()
 {
+
     autons.add_auton("test1", "d1", test1);
+    // autons.add_auton("odom", "odometry test", odom_test);
     autons.add_auton("test2", "d2", test2);
     autons.add_auton("test3", "d3", test3);
 }

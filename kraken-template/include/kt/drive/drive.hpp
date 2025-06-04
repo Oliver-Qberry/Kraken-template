@@ -3,6 +3,7 @@
 #include "api.h"
 #include "kt/util.hpp"
 #include "kt/pid.hpp"
+#include "kt/purePursuit.hpp"
 
 namespace kt
 {
@@ -29,6 +30,9 @@ namespace kt
         double JOYSTICK_Y_SENSITIVITY = 1;
         // saved max voltage
         double max_volts = 127;
+
+        double drive_speed = 1.0;
+        double turn_speed = 1.0;
         // left motor vector
         std::vector<pros::Motor> left_motors;
         // right motor vector
@@ -41,6 +45,7 @@ namespace kt
         double wheel_rpm;
         // saved wheel diameter
         double wheel_diameter;
+        std::string error = "";
         // odometry
         double odom_wheel_diameter;
         double horizontal_tracking_center;
@@ -50,6 +55,9 @@ namespace kt
         double x = 0, y = 0, theta = 0;
         double prev_forward_sensor, prev_rotation_sensor, prev_imu_angle;
         double prev_x, prev_y, prev_theta;
+
+        double look_ahead_distance = 5.0;
+        double positionThreshold = 1.0;
 
         // pid objects
         kt::util::PIDController drive_pid_controller;
@@ -84,6 +92,9 @@ namespace kt
         void enable_odometry(std::vector<int> sensor_ports, double wheel_diameter, double h_tracking_center, double v_tracking_center);
         bool get_odometry_status();
         // integrated. set drive pid constants and exit range
+        void drive_pid_constants(double drive_kP, double drive_kI, double drive_kD, double drive_range, int exit_time);
+        // integrated. set turn pid constants and exit range
+        void turn_pid_constants(double turn_kP, double turn_kI, double turn_kD, double turn_range, int exit_time);
         void drive_pid_constants(double drive_kP, double drive_kI, double drive_kD, double drive_range);
         // integrated. set turn pid constants and exit range
         void turn_pid_constants(double turn_kP, double turn_kI, double turn_kD, double turn_range);
@@ -96,9 +107,13 @@ namespace kt
         void move(double distance, double angle, double turn_multi = 1);
         // move function. pass a voltage (-127 to 127)
         void move(int voltage);
-        void move_to(double x, double y, int theta);
+        void move(int voltage, int delay);
+        void move_to(std::initializer_list<kt::purePursuit::Point> path, double finalAngle);
+        void move_to(kt::purePursuit::Point, double angle);
         // turn function. pass a voltage (-127 to 127)
         void turn(int voltage);
+
+        void turn(int voltage, int delay);
         // brake the drive motors
         void brake();
         // set the drive motor brake modes
@@ -111,6 +126,8 @@ namespace kt
         void reset_odometry_sensors();
         // gets the average motor encoder values
         double get_average_integrated_encoders_positions();
+
+        void set_look_ahead_distance(double distance);
 
     }; // end of chassis class
 } // end of kt namespace

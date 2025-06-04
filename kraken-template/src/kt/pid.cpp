@@ -33,10 +33,24 @@ bool kt::util::PIDController::goal_met()
 {
 	// if the prev error is within the range
 	// or if bypass is true
-	if (fabs(error_prev) < range || bypass)
+	if ((fabs(error_prev) < range && settled_time >= settling_time) || bypass) // TODO: how to access settled time
 	{
 		return true;
 	}
+	else if (fabs(error_prev) < range)
+	{
+		settled_time += 20;
+		return false;
+	}
+	else if (fabs(error_prev) > range)
+	{
+		settled_time = 0;
+	}
 	// else return false
 	return false;
+}
+
+void kt::util::PIDController::increase_settled_time(int time)
+{
+	settled_time += time;
 }

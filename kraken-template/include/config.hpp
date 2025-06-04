@@ -23,5 +23,8 @@ extern kt::Rotation rotation;
 void initialize_devices();
 // function that allows things to be printed to the brains lcd.
 void print_to_lcd_task();
+
+void print_to_controller_task();
+
 void update_position_task();
-void update_position_task_2();
+void auton_editor_task();
