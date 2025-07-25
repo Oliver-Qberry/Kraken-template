@@ -11,6 +11,7 @@ template is made for SHS VRC teams and is based off of what we have at SHS and n
 // includes the auton file for auton setup
 #include "auton.hpp"
 // other includes here
+// #include "kt/auton_handler/auton_editor.hpp"
 
 /*
 a few different namespaces are adding for your convenience.
@@ -108,7 +109,7 @@ void initialize()
     // chassis.opcontrol_tank();
 
     // enable the use of odometry, uncomment to use odometry
-    chassis.enable_odometry(
+    /*chassis.enable_odometry(
         // the ports for the rotation sensors, first one is vertical(forward/backward), second is horizontal
         // negative is if its reveresed
         {9, -8},
@@ -117,7 +118,12 @@ void initialize()
         // the distance in inches from the tracking center to the front/back wheel
         3.0,
         // the distance in inches from the tracking center to the left/right wheel
-        1.0);
+        .75);*/
+
+    // Default PID vlaues
+    // FIXME: tune these
+    chassis.drive_pid_constants(.9, 0, .001, 1);
+    chassis.turn_pid_constants(.9, 0, .001, 1);
 
     // ========== other initialize functions ========== //
     // chassis initialize -> chassis
@@ -128,18 +134,15 @@ void initialize()
     initialize_auton();
 
     // ========== task functions ========== //
-    Task task_odometry(update_position_task_2);
+    Task task_odometry(update_position_task);
     // starts the auto select task
     Task task_auton(auton_select_task);
     // starts lcd print task
     Task task_lcd(print_to_lcd_task);
+    // Task task_controller(print_to_controller_task);
+    // Task task_edit_auton(auton_editor_task);
 
     // put anything else you want to add below here
-
-    // Default PID vlaues
-    // FIXME: tune these
-    chassis.drive_pid_constants(.5, .000000001, .00001, 10);
-    chassis.turn_pid_constants(.5, .000000001, .00001, 10);
 
 } // end of initialize function
 
@@ -179,7 +182,8 @@ void opcontrol()
     // the while loop constantly loops the function while the task is active
     while (true)
     {
-        // TODO: auton writing while in driver control
+        // TODO: make it so that you can use two controllers without editing auton
+        autons.set_editing(partner.is_connected());
 
         // your operator control code should go here
 

@@ -55,6 +55,9 @@ namespace kt
         // runs the current auton
         void run_current_auton();
 
+        // runs the driver created auton
+        void run_driver_auton();
+
         // (TASK function) used to select auton during pre match
         void auton_select_task();
         bool is_editing();

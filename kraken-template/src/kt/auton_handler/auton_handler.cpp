@@ -20,7 +20,21 @@ std::string kt::AUTONS::current_name() { return auton_node_vector[auto_select]._
 
 std::string kt::AUTONS::current_desc() { return auton_node_vector[auto_select]._desc; }
 
-void kt::AUTONS::run_current_auton() { auton_node_vector[auto_select].run(); }
+void kt::AUTONS::run_current_auton()
+{
+    if (!is_editing())
+    {
+        auton_node_vector[auto_select].run();
+    }
+    else
+    {
+        run_driver_auton();
+    }
+}
+
+void kt::AUTONS::run_driver_auton()
+{
+}
 
 void kt::AUTONS::auton_select_task()
 {

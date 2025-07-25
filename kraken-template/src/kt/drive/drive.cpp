@@ -197,7 +197,7 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
     double gearset_rpm_ratio = ((50.0) / ((motor_rpm) / (3600.0))) * ((motor_rpm) / (wheel_rpm));
     // get the actual distance needed to travel in ticks
     // double distanceIn = (((gearset_rpm_ratio * distance) / wheel_diameter)) / 2;
-    double distanceIn = (distance / (wheel_diameter * 3.14)) * (wheel_rpm / motor_rpm) * (180000 / motor_rpm);
+    double distanceIn = (distance / (wheel_diameter * M_PI)) * (wheel_rpm / motor_rpm) * (180000 / motor_rpm);
     // setup drive pid controller
     drive_pid_controller.reset();
     drive_pid_controller.set_goal(distanceIn);
@@ -248,6 +248,7 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
             motor.move(drive_output + (/*turn_error*/ turn_output * right_dir * turn_multi));
         }
         // delay
+        // FIXME: increase settling time
         pros::delay(kt::util::DELAY_TIME);
     } while ((!drive_pid_controller.goal_met() && distance != 0) || (!turn_pid_controller.goal_met()) /* && angle != 0*/);
     brake();
@@ -264,67 +265,21 @@ void kt::Chassis::move_to(std::initializer_list<kt::purePursuit::Point> path, do
 
 void kt::Chassis::move_to(kt::purePursuit::Point destination, double endAngle)
 {
-    move(0, asin(abs(y - destination.y)), 1.0);
+    double dx = destination.x - x;
+    double dy = destination.y - y;
+    double initial_angle = atan2(dy, dx) * 180.0 / M_PI;
+
+    move(0, initial_angle, 1.0);
     // reset drive motor encoders
     double distance = sqrt(pow(x - destination.x, 2) + pow(y - destination.y, 2));
-    // get the gearset ratio of the motor encoder
-    double gearset_rpm_ratio = ((50.0) / ((motor_rpm) / (3600.0))) * ((motor_rpm) / (wheel_rpm));
-    // get the actual distance needed to travel in ticks
-    // double distanceIn = (((gearset_rpm_ratio * distance) / wheel_diameter)) / 2;
-    double centidegrees = distance / (odom_wheel_diameter * M_PI) * 36000;
-    // setup drive pid controller
-    drive_pid_controller.reset();
-    drive_pid_controller.set_goal(centidegrees + odom_rotation_sensors[0].get_position());
-    double current_pos, drive_output;
-    // get the target angle
-    double target_angle = imu.get_heading() + asin(abs(y - destination.y));
-    // setup turn pid controller
-    turn_pid_controller.reset();
-    turn_pid_controller.set_goal(target_angle); // target_angle
-    double turn_error, turn_output;
-    // if turn multi is 0 bypass the pid so goalmet will always be true
-    /*if (turn_multi == 0)
-    {
-        turn_pid_controller.bypass = true;
-    }
-    else
-    {
-        turn_pid_controller.bypass = false;
-    }*/
-    // end of bypass if else
-    // create direction integer variables
-    int left_dir, right_dir;
-    // pid loop
-    do
-    {
-        // find the current position with the motor encoders
-        current_pos = odom_rotation_sensors[0].get_position(); // what do we set as the current position.
-        // get the drive pid output
-        drive_output = drive_pid_controller.calculate(current_pos);
-        // get the current turn error (target - current)
-        turn_error = kt::util::imu_error_calc(imu.get_heading(), target_angle); // target angle
-        // get the turn pid output
-        turn_output = turn_pid_controller.calculate_turn(turn_error);
-        // check the direction of the turn output to set signs
+    move(sqrt(dx * dx + dy * dy), 0, 1.0);
 
-        left_dir = (kt::util::sgn(turn_error));
-        right_dir = (kt::util::sgn(turn_error)) * -1;
-        // if it drifts off cource we want it to correct
-        // set moves voltage to outputs
-        for (auto motor : left_motors)
-        {
-            motor.move(drive_output + (/*turn_error*/ turn_output * left_dir));
-        }
-        // should one of these subtract, maybe not becuase direction is + or -
-        for (auto motor : right_motors)
-        {
-            motor.move(drive_output + (/*turn_error*/ turn_output * right_dir));
-        }
-        // delay
-        pros::delay(kt::util::DELAY_TIME);
-    } while ((!drive_pid_controller.goal_met() && distance != 0) || (!turn_pid_controller.goal_met()) /* && angle != 0*/);
+    // Or turn to destination and drive there
+    // move(sqrt(dx * dx + dy * dy), initial_angle, 1.0);
+
     brake();
-    move(0, endAngle, 1.0);
+    double final_turn = kt::util::imu_error_calc(endAngle, theta);
+    move(0, final_turn, 1.0);
 }
 
 void kt::Chassis::drive_pid_constants(double drive_kP, double drive_kI, double drive_kD, double drive_range)

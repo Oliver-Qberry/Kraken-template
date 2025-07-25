@@ -16,6 +16,7 @@ namespace kt
             double max_integral = 100.0;
             //
             double range, goal;
+            int settling_time, settled_time;
             // bypass pid goal met
             bool bypass = false;
 
@@ -44,6 +45,12 @@ namespace kt
             void set_range(double range)
             {
                 this->range = range;
+                this->settling_time = 80; // set a default
+            }
+            void set_range(double range, int settling_time)
+            {
+                this->range = range;
+                this->settling_time = settling_time;
             }
 
             // resets the pid errors
@@ -60,6 +67,8 @@ namespace kt
             double calculate_turn(double current_error);
             // check if the goal has been met (prev_error within the exit range). returns a bool.
             bool goal_met();
+
+            void increase_settled_time(int time);
         };
 
     } // end of util namespace

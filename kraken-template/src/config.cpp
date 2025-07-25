@@ -5,6 +5,8 @@
 // other includes
 #include "pros/misc.h"
 #include "main.h"
+#include "kt/auton_handler/auton_commands.hpp"
+#include "kt/auton_handler/auton_editor.hpp"
 
 // namespace
 using namespace pros;
@@ -84,17 +86,22 @@ void print_to_controller_task()
 {
     while (true)
     {
-        if (!autons.is_editing())
-        {
-            // normal display
-        }
-        else
-        {
-            master.clear();
-            // editing display
-            master.set_text(0, 0, "add command");
-            master.set_text(1, 0, "run");
-        }
+    }
+}
+
+void refresh_editor_lcd()
+{
+    EditorScreen partnerScreen = {
+        "> Edit",
+        "Run",
+        ""};
+    while (true)
+    {
+        partner.clear();
+        // editing display
+        partner.set_text(0, 0, kt::auton_editor::editorScreenLines.line1);
+        partner.set_text(1, 0, kt::auton_editor::editorScreenLines.line2);
+        partner.set_text(2, 0, kt::auton_editor::editorScreenLines.line3);
         pros::delay(50);
     }
 }
@@ -237,55 +244,132 @@ void auton_editor_task()
 {
     enum class Level
     {
-        Overview,
-        AddCommand,
-        EditCommandParams
+        Main,       // Edit, Run and Reset
+        Overview,   // Show all the current commands and some of thier parameters
+        EditCommand // Editing/Adding command, will show command "type" and params, you can edit and add them
     };
-    Level current_location = Level::Overview;
+    std::string main_lines[] = {"Edit", "Run", "Reset"};
+
+    Level current_location = Level::Main;
     int selectorLine = 0; // 0-2
     bool rightyLatch = false;
     int threashold = 50;
 
+    // current selector location, numbers start at 1
+    const int visual_total_lines = 3; // 3 lines are availbale on screen
+    int current_line = 1;             // must be <= current_total_lines
+    int current_visual_line = 1;
+    int current_total_lines = 3; // for only if there are < three lines
+    int current_total_visual_lines = 3;
+
     autons.set_editing(true);
     while (true)
     {
-        if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_R1))
+        if (partner.get_digital_new_press(E_CONTROLLER_DIGITAL_R1))
         {
             // tab forward
+            if (current_location == Level::EditCommand && current_line == 1) // change to next command type
+            {
+            }
         }
-        else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_L1))
+        else if (partner.get_digital_new_press(E_CONTROLLER_DIGITAL_L1))
         {
             // tab back
+            if (current_location == Level::EditCommand && current_line == 1) // change to preveious command type
+            {
+            }
         }
-        else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_A))
+        else if (partner.get_digital_new_press(E_CONTROLLER_DIGITAL_A))
         {
             // accept/enter
+            switch (current_location)
+            {
+            case Level::Main:
+                if (current_line == 1) // edit
+                {
+                    // TODO: next "screen"
+                    current_location = Level::Overview;
+                    current_line = 1;
+                    current_visual_line = 1;
+                    current_total_lines = kt::auton_editor::driverAuton.size();
+                }
+                else if (current_line == 2) // run
+                {
+                    kt::auton_editor::runDriverAuton();
+                }
+                else if (current_line == 3) // Reset
+                {
+                    kt::auton_editor::reset();
+                }
+                else
+                {
+                    chassis.error = "Editing main screen out of bounds";
+                }
+                break;
+            case Level::Overview:
+                break;
+            case Level::EditCommand:
+                break;
+            }
         }
-        else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_B))
+        else if (partner.get_digital_new_press(E_CONTROLLER_DIGITAL_B))
         {
             // Back to last level
         }
-        else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_UP))
+        else if (partner.get_digital_new_press(E_CONTROLLER_DIGITAL_UP))
         {
             // next option/increment
         }
-        else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN))
+        else if (partner.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN))
         {
             // last option/deincrement
         }
-        else if (master.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y) > threashold && !rightyLatch)
+        else if (partner.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y) > threashold && !rightyLatch)
         {
-            rightyLatch = true;
             //"scroll" up
-        }
-        else if (master.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y) < (-1 * threashold) && !rightyLatch)
-        {
             rightyLatch = true;
-            // scroll down
+            current_line -= 1;
+            if (current_line < 1)
+            {
+                current_line = 1;
+            }
+        }
+        else if (partner.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y) < (-1 * threashold) && !rightyLatch)
+        {
+            // "scrol" down
+            rightyLatch = true;
+            current_line += 1;
+            if (current_line > current_total_lines)
+            {
+                current_line = current_total_lines;
+            }
         }
         else
         {
             rightyLatch = false;
+        }
+
+        if (current_location == Level::Main)
+        {
+            switch (current_line)
+            {
+            case 1:
+                auton_editor::editorScreenLines.line1 = "> Edit";
+                auton_editor::editorScreenLines.line2 = "Run";
+                auton_editor::editorScreenLines.line3 = "Reset";
+                break;
+            case 2:
+                auton_editor::editorScreenLines.line1 = "Edit";
+                auton_editor::editorScreenLines.line2 = "> Run";
+                auton_editor::editorScreenLines.line3 = "Reset";
+                break;
+            case 3:
+                auton_editor::editorScreenLines.line1 = "Edit";
+                auton_editor::editorScreenLines.line2 = "Run";
+                auton_editor::editorScreenLines.line3 = "> Reset";
+                break;
+            }
+            refresh_editor_lcd();
         }
 
         pros::delay(kt::util::DELAY_TIME);

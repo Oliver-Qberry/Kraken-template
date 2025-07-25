@@ -31,9 +31,9 @@ double kt::util::PIDController::calculate_turn(double current_error)
 
 bool kt::util::PIDController::goal_met()
 {
-	// if the prev error is within the range
+	// if the prev error is within the range and its been there long enough
 	// or if bypass is true
-	if ((fabs(error_prev) < range && settled_time >= settling_time) || bypass) // TODO: how to access settled time
+	if ((fabs(error_prev) < range && settled_time >= settling_time) || bypass)
 	{
 		return true;
 	}

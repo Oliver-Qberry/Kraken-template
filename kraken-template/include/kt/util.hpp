@@ -4,6 +4,7 @@
 
 // primary controller definition
 extern pros::Controller master;
+extern pros::Controller partner;
 
 // standard namespace for kraken template
 namespace kt

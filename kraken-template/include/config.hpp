@@ -26,5 +26,7 @@ void print_to_lcd_task();
 
 void print_to_controller_task();
 
+void refresh_editor_lcd();
+
 void update_position_task();
 void auton_editor_task();
