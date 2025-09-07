@@ -1,8 +1,13 @@
 // kt includes
 #include "auton.hpp"
-#include "config.hpp"
+#include "devices.hpp"
 #include "kt/util.hpp"
+#include "pros/rtos.hpp"
+#include <iostream>
 // other includes
+
+using namespace pros;
+using namespace kt::devices;
 
 // ==================== add your auto functions here ==================== //
 /*
@@ -59,3 +64,16 @@ void auton_select_task()
         pros::delay(kt::util::DELAY_TIME);
     }
 }
+
+// ==================== auton selector setup ==================== //
+/*
+this is the main autons class definition. it is used to handle all the autons you make and has build in auton
+select on the controller.
+right now you can only use a controller to select what auton you want to use but that might change in the future.
+*/
+kt::AUTONS autons(
+    // pass a controller keybind for auto select
+    E_CONTROLLER_DIGITAL_DOWN
+
+);
+// end of autons class setup

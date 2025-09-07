@@ -345,14 +345,14 @@ void kt::Chassis::drive_pid_constants(double drive_kP, double drive_kI, double d
 {
     // set pid const
     drive_pid_controller.set_pid_constants(drive_kP, drive_kI, drive_kD);
-    drive_pid_controller.set_range(drive_range, exit_time);
+    drive_pid_controller.set_range(drive_range /*, exit_time*/);
 }
 
 void kt::Chassis::turn_pid_constants(double turn_kP, double turn_kI, double turn_kD, double turn_range, int exit_time)
 {
     // set pid const
     turn_pid_controller.set_pid_constants(turn_kP, turn_kI, turn_kD);
-    turn_pid_controller.set_range(turn_range, exit_time);
+    turn_pid_controller.set_range(turn_range /*, exit_time*/);
 }
 
 void kt::Chassis::move(int voltage)
