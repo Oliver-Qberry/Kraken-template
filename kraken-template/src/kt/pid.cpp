@@ -39,7 +39,7 @@ bool kt::util::PIDController::goal_met()
 	}
 	else if (fabs(error_prev) < range)
 	{
-		settled_time += 20;
+		increase_settled_time(20);
 		return false;
 	}
 	else if (fabs(error_prev) > range)

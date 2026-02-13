@@ -16,11 +16,17 @@ void kt::AUTONS::increment()
     }
 }
 
-std::string kt::AUTONS::current_name() { return auton_node_vector[auto_select]._name; }
+std::string kt::AUTONS::current_name() { return auton_node_vector[auto_select]._name == "" ? "None" : auton_node_vector[auto_select]._name; }
 
-std::string kt::AUTONS::current_desc() { return auton_node_vector[auto_select]._desc; }
+std::string kt::AUTONS::current_desc() { return auton_node_vector[auto_select]._desc == "" ? "No Description" : auton_node_vector[auto_select]._desc; }
 
-void kt::AUTONS::run_current_auton() { auton_node_vector[auto_select].run(); }
+void kt::AUTONS::run_current_auton()
+{
+    if (auton_node_vector[auto_select]._function != nullptr)
+    {
+        auton_node_vector[auto_select].run();
+    };
+}
 
 void kt::AUTONS::auton_select_task()
 {

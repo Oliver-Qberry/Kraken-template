@@ -409,7 +409,7 @@ void kt::Chassis::turn(int voltage, int delay)
     // move right motors
     for (auto motor : right_motors)
     {
-        motor.move(voltage);
+        motor.move(-voltage);
     }
     pros::delay(delay);
     brake();

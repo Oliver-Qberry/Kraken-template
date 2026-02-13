@@ -19,6 +19,10 @@ namespace kt
             // bypass pid goal met
             bool bypass = false;
 
+            // settling time variables
+            int settling_time = 100;
+            int settled_time = 0;
+
             // sets the P I D constants
             void set_pid_constants(double kP, double kI, double kD)
             {
@@ -52,7 +56,9 @@ namespace kt
                 this->error_prev = 0;
                 this->error_total = 0;
                 this->error_change = 0;
+                this->settled_time = 0;
             }
+            void increase_settled_time(int time);
 
             // calculate pid with current value. returns the pids output as a double.
             double calculate(double current_value);
