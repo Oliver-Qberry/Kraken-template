@@ -91,6 +91,10 @@ namespace kt
         // enable odometry
         void enable_odometry(std::vector<int> sensor_ports, double wheel_diameter, double h_tracking_center, double v_tracking_center);
         bool get_odometry_status();
+        // update odometry pose from tracking sensors + imu
+        void update_odometry();
+        // set a starting odometry pose
+        void set_pose(double x, double y, double theta);
         // integrated. set drive pid constants and exit range
         void drive_pid_constants(double drive_kP, double drive_kI, double drive_kD, double drive_range, int exit_time = 20);
         // integrated. set turn pid constants and exit range

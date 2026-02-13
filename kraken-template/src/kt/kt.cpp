@@ -14,8 +14,18 @@ namespace kt
         initialize_devices();
 
         chassis_setup();
+        if (chassis.get_odometry_status())
+        {
+            Task task_odometry([]()
+                               {
+                                   while (true)
+                                   {
+                                       chassis.update_odometry();
+                                       pros::delay(kt::util::DELAY_TIME);
+                                   }
+                               });
+        }
         // ========== Start framework tasks ==========
-        // pros::Task task_odometry(update_position_task);
         Task task_auton(auton_select_task);
         Task task_lcd(print_to_lcd_task);
 
