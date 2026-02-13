@@ -35,14 +35,15 @@ to keep execution time for this mode under a few seconds.
 */
 void initialize()
 {
+    // Register autons before any framework tasks may read from the auton list.
+    initialize_auton();
+
     // init framework (background tasks, devices etc.)
     kt::init();
 
     // ========== other initialize functions ========== //
     // chassis initialize -> chassis
     kt::devices::chassis.initialize();
-    // auton initialize -> auton.cpp
-    initialize_auton();
 
 } // end of initialize function
 
