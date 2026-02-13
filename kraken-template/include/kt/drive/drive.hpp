@@ -92,12 +92,9 @@ namespace kt
         void enable_odometry(std::vector<int> sensor_ports, double wheel_diameter, double h_tracking_center, double v_tracking_center);
         bool get_odometry_status();
         // integrated. set drive pid constants and exit range
-        void drive_pid_constants(double drive_kP, double drive_kI, double drive_kD, double drive_range, int exit_time);
+        void drive_pid_constants(double drive_kP, double drive_kI, double drive_kD, double drive_range, int exit_time = 20);
         // integrated. set turn pid constants and exit range
-        void turn_pid_constants(double turn_kP, double turn_kI, double turn_kD, double turn_range, int exit_time);
-        void drive_pid_constants(double drive_kP, double drive_kI, double drive_kD, double drive_range);
-        // integrated. set turn pid constants and exit range
-        void turn_pid_constants(double turn_kP, double turn_kI, double turn_kD, double turn_range);
+        void turn_pid_constants(double turn_kP, double turn_kI, double turn_kD, double turn_range, int exit_time = 20);
         /*
         complex move function. parameters:
             double, distance to move forward (negative for reverse)

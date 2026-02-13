@@ -25,6 +25,12 @@ double kt::util::PIDController::calculate_turn(double current_error)
 	error_change = error - error_prev;
 	error_total += error;
 	error_prev = error;
+
+	if (error_total > max_integral)
+		error_total = max_integral;
+	if (error_total < -max_integral)
+		error_total = -max_integral;
+
 	// return the sum * const
 	return (error * kP + error_total * kI + error_change * kD);
 }

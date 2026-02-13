@@ -6,6 +6,7 @@
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include <string>
+#include <algorithm>
 
 void kt::Chassis::initialize()
 {
@@ -203,11 +204,12 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
     drive_pid_controller.set_goal(distanceIn);
     double current_pos, drive_output;
     // get the target angle
-    imu.set_heading(0);
+    // imu.set_heading(0);
     double target_angle = imu.get_heading() + angle;
     // setup turn pid controller
     turn_pid_controller.reset();
-    turn_pid_controller.set_goal(angle); // target_angle
+    // keep turn control on the same PID path as drive: goal/current in calculate()
+    turn_pid_controller.set_goal(0);
     double turn_error, turn_output;
     // if turn multi is 0 bypass the pid so goalmet will always be true
     if (turn_multi == 0)
@@ -219,7 +221,6 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
         turn_pid_controller.bypass = false;
     } // end of bypass if else
     // create direction integer variables
-    int left_dir, right_dir;
 
     // pid loop
     do
@@ -229,23 +230,21 @@ void kt::Chassis::move(double distance, double angle, double turn_multi)
         // get the drive pid output
         drive_output = drive_pid_controller.calculate(current_pos);
         // get the current turn error (target - current)
-        turn_error = kt::util::imu_error_calc(imu.get_heading(), angle); // target angle
-        // get the turn pid output
-        turn_output = turn_pid_controller.calculate_turn(turn_error);
+        turn_error = kt::util::imu_error_calc(imu.get_heading(), target_angle);
+        // calculate() computes goal-current, so pass -turn_error to preserve sign.
+        turn_output = turn_pid_controller.calculate(-turn_error);
         // check the direction of the turn output to set signs
 
-        left_dir = (kt::util::sgn(turn_error));
-        right_dir = (kt::util::sgn(turn_error)) * -1;
         // if it drifts off cource we want it to correct
         // set moves voltage to outputs
         for (auto motor : left_motors)
         {
-            motor.move(drive_output + (/*turn_error*/ turn_output * left_dir * turn_multi));
+            motor.move(std::clamp(drive_output + (turn_output * turn_multi), -max_volts, max_volts));
         }
         // should one of these subtract, maybe not becuase direction is + or -
         for (auto motor : right_motors)
         {
-            motor.move(drive_output + (/*turn_error*/ turn_output * right_dir * turn_multi));
+            motor.move(std::clamp(drive_output - (turn_output * turn_multi), -max_volts, max_volts));
         }
         // delay
         pros::delay(kt::util::DELAY_TIME);
@@ -327,32 +326,18 @@ void kt::Chassis::move_to(kt::purePursuit::Point destination, double endAngle)
     move(0, endAngle, 1.0);
 }
 
-void kt::Chassis::drive_pid_constants(double drive_kP, double drive_kI, double drive_kD, double drive_range)
-{
-    // set pid const
-    drive_pid_controller.set_pid_constants(drive_kP, drive_kI, drive_kD);
-    drive_pid_controller.set_range(drive_range);
-}
-
-void kt::Chassis::turn_pid_constants(double turn_kP, double turn_kI, double turn_kD, double turn_range)
-{
-    // set pid const
-    turn_pid_controller.set_pid_constants(turn_kP, turn_kI, turn_kD);
-    turn_pid_controller.set_range(turn_range);
-}
-
 void kt::Chassis::drive_pid_constants(double drive_kP, double drive_kI, double drive_kD, double drive_range, int exit_time)
 {
     // set pid const
     drive_pid_controller.set_pid_constants(drive_kP, drive_kI, drive_kD);
-    drive_pid_controller.set_range(drive_range /*, exit_time*/);
+    drive_pid_controller.set_range(drive_range, exit_time);
 }
 
 void kt::Chassis::turn_pid_constants(double turn_kP, double turn_kI, double turn_kD, double turn_range, int exit_time)
 {
     // set pid const
     turn_pid_controller.set_pid_constants(turn_kP, turn_kI, turn_kD);
-    turn_pid_controller.set_range(turn_range /*, exit_time*/);
+    turn_pid_controller.set_range(turn_range, exit_time);
 }
 
 void kt::Chassis::move(int voltage)

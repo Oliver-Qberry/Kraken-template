@@ -45,9 +45,10 @@ namespace kt
             }
 
             // sets the pid exit range
-            void set_range(double range)
+            void set_range(double range, double exit_time = 20)
             {
                 this->range = range;
+                this->settling_time = exit_time;
             }
 
             // resets the pid errors
